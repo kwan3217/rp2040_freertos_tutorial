@@ -15,14 +15,17 @@ static const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
 // Blink task: replaces the original while loop
 void vBlinkTask(void *pvParameters) {
+    // Parameter is an x but cast to pv so that it can satisfy the prototype
+    BaseType_t delay=(BaseType_t)pvParameters;
+     
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
     for (;;) {
         gpio_put(LED_PIN, 1);
-        vTaskDelay(pdMS_TO_TICKS(500));   // Tick-aware delay (better than sleep_ms for RTOS)
+        vTaskDelay(pdMS_TO_TICKS(delay));   // Tick-aware delay (better than sleep_ms for RTOS)
         gpio_put(LED_PIN, 0);
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(delay));
     }
 }
 
@@ -44,9 +47,19 @@ int main() {
     // Create blink task
     xTaskCreate(
         vBlinkTask,
-        "Blink",                  // task name (for debugging)
+        "BlinkA",                  // task name (for debugging)
         BLINK_STACK_SIZE,
-        NULL,                     // parameters (none yet)
+        (void*)257,                     // parameters (none yet)
+        BLINK_TASK_PRIORITY,
+        NULL                      // task handle (none needed)
+    );
+
+    // Create blink task
+    xTaskCreate(
+        vBlinkTask,
+        "BlinkB",                  // task name (for debugging)
+        BLINK_STACK_SIZE,
+        (void*)509,                     // parameters (none yet)
         BLINK_TASK_PRIORITY,
         NULL                      // task handle (none needed)
     );
