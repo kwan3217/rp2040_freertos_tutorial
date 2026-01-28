@@ -7,6 +7,7 @@ set(CMAKE_DEPENDENCY_FILE_SUFFIX ".d")
 set(PICO_BOARD pico)
 
 # Pull in Pico SDK (using the local submodule)
+set(PICO_SDK_PATH ${CMAKE_CURRENT_LIST_DIR}/pico-sdk)
 include(${CMAKE_CURRENT_LIST_DIR}/pico-sdk/external/pico_sdk_import.cmake)
 
 project(rp2040_freertos_tutorial C CXX ASM)
@@ -37,7 +38,7 @@ add_executable(rp2040_freertos_tutorial
 # Link everything
 target_link_libraries(rp2040_freertos_tutorial PRIVATE
     pico_stdlib
-    pico_cyw43_arch_none          # no Wi-Fi/BT needed for basic tests
+#    pico_cyw43_arch_none          # no Wi-Fi/BT needed for basic tests
     freertos_config               # makes FreeRTOSConfig.h visible
     FreeRTOS-Kernel               # core kernel (created by import script)
     FreeRTOS-Kernel-Heap4         # matches FREERTOS_HEAP=4
