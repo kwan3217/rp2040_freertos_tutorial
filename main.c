@@ -13,10 +13,10 @@
 // Shared LED pin (could be passed as parameter later)
 static const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
+BaseType_t delay=250;
+
 // Blink task: replaces the original while loop
 void vBlinkTask(void *pvParameters) {
-    // Parameter is an x but cast to pv so that it can satisfy the prototype
-    BaseType_t delay=(BaseType_t)pvParameters;
      
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
@@ -34,9 +34,15 @@ void vPrintTask(void *pvParameters) {
     uint32_t counter = 0;
 
     for (;;) {
-        printf("FreeRTOS Blink count: %u\n", ++counter);
+        printf("FreeRTOS Blink count: %u delay: %d\n", ++counter, delay);
         vTaskDelay(pdMS_TO_TICKS(510));   // Slightly offset so output doesn't align perfectly with LED
     }
+}
+
+void vReadTask(void *pvParameters) {
+  for(;;) {
+    scanf("%d",&delay);
+  }
 }
 
 int main() {
@@ -49,17 +55,7 @@ int main() {
         vBlinkTask,
         "BlinkA",                  // task name (for debugging)
         BLINK_STACK_SIZE,
-        (void*)257,                     // parameters (none yet)
-        BLINK_TASK_PRIORITY,
-        NULL                      // task handle (none needed)
-    );
-
-    // Create blink task
-    xTaskCreate(
-        vBlinkTask,
-        "BlinkB",                  // task name (for debugging)
-        BLINK_STACK_SIZE,
-        (void*)509,                     // parameters (none yet)
+        NULL,                     // parameters (none yet)
         BLINK_TASK_PRIORITY,
         NULL                      // task handle (none needed)
     );
@@ -68,6 +64,16 @@ int main() {
     xTaskCreate(
         vPrintTask,
         "Print",
+        PRINT_STACK_SIZE,
+        NULL,
+        PRINT_TASK_PRIORITY,
+        NULL
+    );
+
+    // Create print task
+    xTaskCreate(
+        vReadTask,
+        "Read",
         PRINT_STACK_SIZE,
         NULL,
         PRINT_TASK_PRIORITY,
