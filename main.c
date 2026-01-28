@@ -7,6 +7,7 @@
 // Task parameters
 #define BLINK_TASK_PRIORITY     ( tskIDLE_PRIORITY + 1 )
 #define PRINT_TASK_PRIORITY     ( tskIDLE_PRIORITY + 1 )
+#define READ_TASK_PRIORITY     ( tskIDLE_PRIORITY + 2 )
 #define BLINK_STACK_SIZE        ( 256 )   // words
 #define PRINT_STACK_SIZE        ( 256 )
 
@@ -14,6 +15,7 @@
 static const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
 BaseType_t delay=250;
+BaseType_t blink_count=0;
 
 // Blink task: replaces the original while loop
 void vBlinkTask(void *pvParameters) {
@@ -23,6 +25,7 @@ void vBlinkTask(void *pvParameters) {
 
     for (;;) {
         gpio_put(LED_PIN, 1);
+        blink_count++;
         vTaskDelay(pdMS_TO_TICKS(delay));   // Tick-aware delay (better than sleep_ms for RTOS)
         gpio_put(LED_PIN, 0);
         vTaskDelay(pdMS_TO_TICKS(delay));
@@ -31,17 +34,28 @@ void vBlinkTask(void *pvParameters) {
 
 // Print task: simulates a "sensor" or logger task
 void vPrintTask(void *pvParameters) {
-    uint32_t counter = 0;
-
     for (;;) {
-        printf("FreeRTOS Blink count: %u delay: %d\n", ++counter, delay);
+        printf("FreeRTOS Blink count: %u delay: %d\n", blink_count, delay);
         vTaskDelay(pdMS_TO_TICKS(510));   // Slightly offset so output doesn't align perfectly with LED
     }
 }
 
 void vReadTask(void *pvParameters) {
+  BaseType_t next_delay=0;
+  BaseType_t has_input=0;
   for(;;) {
-    scanf("%d",&delay);
+    int c = getchar_timeout_us(0);
+    if (c != PICO_ERROR_TIMEOUT) {
+        if(c>='0' && c<='9') {
+          has_input=1;
+          next_delay=next_delay*10+(c-'0');
+        } else {
+          if(has_input) delay=next_delay;
+          next_delay=0;
+          has_input=0;
+        }
+    }
+    vTaskDelay(pdMS_TO_TICKS(1));
   }
 }
 
