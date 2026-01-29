@@ -103,18 +103,46 @@ inside the function.
   the user interface to run concurrently with the control task (the blinking LED).
 
 ### My Solution
-Set up a read task. First effort used `scanf()` which works, but only because priority is just right. If priority of the reading
-task was higher, it would block but never yield.
+Set up a read task. First effort used `scanf()` which works, but only because priority 
+is just right. If priority of the reading task was higher, it would block but never yield.
 
-Second effort uses pico_sdk function `getchar_timeout_us(0)` which returns immediately with either a char or "no char ready". If there
-is a char ready, check if it's a digit. If it is, accumulate the digit. if not, set the delay if we saw any digits, then reset the 
-accumulator.
+Second effort uses pico_sdk function `getchar_timeout_us(0)` which returns immediately
+with either a char or "no char ready". If there is a char ready, check if it's a digit.
+If it is, accumulate the digit. if not, set the delay if we saw any digits, then reset 
+the accumulator.
 
 ## Lesson 4 - Memory Allocation
 
 ### Challenge
-> Using FreeRTOS, create two separate tasks. One listens for input over UART (from the Serial Monitor). Upon receiving a newline character (‘\n’), the task allocates a new section of heap memory (using pvPortMalloc()) and stores the string up to the newline character in that section of heap. It then notifies the second task that a message is ready.
+> Using FreeRTOS, create two separate tasks. One listens for input over UART (from the
+  Serial Monitor). Upon receiving a newline character (‘\n’), the task allocates a 
+  new section of heap memory (using pvPortMalloc()) and stores the string up to the
+  newline character in that section of heap. It then notifies the second task that a
+  message is ready.
 > 
-> The second task waits for notification from the first task. When it receives that notification, it prints the message in heap memory to the Serial Monitor. Finally, it deletes the allocated heap memory (using vPortFree()).
+> The second task waits for notification from the first task. When it receives that 
+  notification, it prints the message in heap memory to the Serial Monitor. Finally,
+  it deletes the allocated heap memory (using vPortFree()).
 
-This is before the queue section, so we will (inappropriately) use global variables. We will carefully use volatile global variables even though queues are more appropriate (we haven't reached that lesson yet)
+This is before the queue section, so we will (inappropriately) use global variables. 
+We will carefully use volatile global variables even though queues are more appropriate
+(we haven't reached that lesson yet)
+
+## Lesson 5 - Queues
+
+### Challenge
+> Use FreeRTOS to create two tasks and two queues.
+> 
+> ![Two tasks using two queues to communicate](readme_images/challenge5.jpeg)
+>
+> Task A should print any new messages it receives from Queue 2. Additionally, it
+  should read any Serial input from the user and echo back this input to the serial
+  input. If the user enters “delay” followed by a space and a number, it should
+  send that number to Queue 1.
+>
+> Task B should read any messages from Queue 1. If it contains a number, it should
+  update its delay rate to that number (milliseconds). It should also blink an LED
+  at a rate specified by that delay. Additionally, every time the LED blinks 100 
+  times, it should send the string “Blinked” to Queue 2. You can also optionally send
+  the number of times the LED blinked (e.g. 100) as part of struct that encapsulates
+  the string and this number.
