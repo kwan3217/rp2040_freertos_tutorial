@@ -5,6 +5,7 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "task.h"
+#include "hardware/timer.h"
 
 // Task parameters
 #define BLINK_TASK_PRIORITY     ( tskIDLE_PRIORITY + 1 )
@@ -38,7 +39,7 @@ void vTaskA(void *pvParameters) {
       // check queue 2 for messages. if there is one, pull it and print it
       char* msg;
       if (xQueueReceive(queue2,&msg,0)) {
-        printf("%s\n",msg);
+        printf("systick: %llu %s\n",time_us_64(),msg);
         vPortFree(msg);
       }
       //check if stdin has any chars
