@@ -69,83 +69,10 @@ The process is:
 
 
 
-## Lesson 1 - Why an RTOS?
-[Web Page](https://www.digikey.com/en/maker/projects/what-is-a-realtime-operating-system-rtos/28d8087f53844decafa5000d89608016)
-[Video](https://www.youtube.com/watch?v=F321087yYy4)
-No code for this lesson
-
-## Lesson 2 - Two tasks
-[Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-2-freertos/b3f84c9c9455439ca2dcb8ccfce9dec5)
-[Video](https://www.youtube.com/watch?v=JIr7Xm_riRs)
-
-### Challenge
-
-> Using FreeRTOS, create two separate tasks that blink the same LED at two different rates. That means controlling 1 LED with two different delay times.
-
-I interpret this as meaning that the two tasks each have their own led state, toggle it internally and independently, 
-then set the led to whatever the state is. This might mean that task 2 sets the LED to the same state that task 1 already did. Use two three-digit prime
-numbers different by more than a factor of 2 so that it takes a *long* time for the cycle to repeat.
-
-### My Solution
-I use the same task function to do both tasks. Task functions take a parameter in the form of a void pointer. 
-This can be used to pass a pointer to a memory block with an arbitrary structure, but in this problem I want to
-pass a delay length, so I just cast the delay length in ticks to a pointer, then cast back to an integer
-inside the function.
-
-## Lesson 3 - non-blocking USB input
-
-### Challenge
-
-> Using FreeRTOS, create two separate tasks. One listens for an integer over UART 
-  (from the Serial Monitor) and sets a variable when it sees an integer. The other 
-  task blinks the onboard LED (or other connected LED) at a rate specified by that 
-  integer. In effect, you want to create a multi-threaded system that allows for 
-  the user interface to run concurrently with the control task (the blinking LED).
-
-### My Solution
-Set up a read task. First effort used `scanf()` which works, but only because priority 
-is just right. If priority of the reading task was higher, it would block but never yield.
-
-Second effort uses pico_sdk function `getchar_timeout_us(0)` which returns immediately
-with either a char or "no char ready". If there is a char ready, check if it's a digit.
-If it is, accumulate the digit. if not, set the delay if we saw any digits, then reset 
-the accumulator.
-
-## Lesson 4 - Memory Allocation
-
-### Challenge
-> Using FreeRTOS, create two separate tasks. One listens for input over UART (from the
-  Serial Monitor). Upon receiving a newline character (‘\n’), the task allocates a 
-  new section of heap memory (using pvPortMalloc()) and stores the string up to the
-  newline character in that section of heap. It then notifies the second task that a
-  message is ready.
-> 
-> The second task waits for notification from the first task. When it receives that 
-  notification, it prints the message in heap memory to the Serial Monitor. Finally,
-  it deletes the allocated heap memory (using vPortFree()).
-
-This is before the queue section, so we will (inappropriately) use global variables. 
-We will carefully use volatile global variables even though queues are more appropriate
-(we haven't reached that lesson yet)
-
-## Lesson 5 - Queues
-
-### Challenge
-> Use FreeRTOS to create two tasks and two queues.
-> 
-> ![Two tasks using two queues to communicate](readme_images/challenge5.jpeg)
->
-> Task A should print any new messages it receives from Queue 2. Additionally, it
-  should read any Serial input from the user and echo back this input to the serial
-  input. If the user enters “delay” followed by a space and a number, it should
-  send that number to Queue 1.
->
-> Task B should read any messages from Queue 1. If it contains a number, it should
-  update its delay rate to that number (milliseconds). It should also blink an LED
-  at a rate specified by that delay. Additionally, every time the LED blinks 100 
-  times, it should send the string “Blinked” to Queue 2. You can also optionally send
-  the number of times the LED blinked (e.g. 100) as part of struct that encapsulates
-  the string and this number.
- 
-This is implemented very directly. Task A could be decomposed into a usb reading task and a
-usb printing task, but that's not the spec.
+## Lessons and Challenges
+1. [Web Page](https://www.digikey.com/en/maker/projects/what-is-a-realtime-operating-system-rtos/28d8087f53844decafa5000d89608016) [Video](https://www.youtube.com/watch?v=F321087yYy4) No code for this lesson
+2. [Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-2-freertos/b3f84c9c9455439ca2dcb8ccfce9dec5) [Video](https://www.youtube.com/watch?v=JIr7Xm_riRs) [Challenge](challenges/lesson2.md)
+3. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+4. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+5. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+6. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
