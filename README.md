@@ -146,3 +146,6 @@ We will carefully use volatile global variables even though queues are more appr
   times, it should send the string “Blinked” to Queue 2. You can also optionally send
   the number of times the LED blinked (e.g. 100) as part of struct that encapsulates
   the string and this number.
+ 
+This is implemented very directly. Task A could be decomposed into a usb reading task and a
+usb printing task, but that's not the spec.
