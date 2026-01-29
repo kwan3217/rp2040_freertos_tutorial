@@ -1,4 +1,5 @@
 // main.c
+#include <string.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "FreeRTOS.h"
@@ -14,45 +15,37 @@
 // Shared LED pin (could be passed as parameter later)
 static const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
-BaseType_t delay=250;
-BaseType_t blink_count=0;
-
-// Blink task: replaces the original while loop
-void vBlinkTask(void *pvParameters) {
-     
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-
-    for (;;) {
-        gpio_put(LED_PIN, 1);
-        blink_count++;
-        vTaskDelay(pdMS_TO_TICKS(delay));   // Tick-aware delay (better than sleep_ms for RTOS)
-        gpio_put(LED_PIN, 0);
-        vTaskDelay(pdMS_TO_TICKS(delay));
-    }
-}
+char* volatile msg_ptr=NULL;
 
 // Print task: simulates a "sensor" or logger task
 void vPrintTask(void *pvParameters) {
     for (;;) {
-        printf("FreeRTOS Blink count: %u delay: %d\n", blink_count, delay);
-        vTaskDelay(pdMS_TO_TICKS(510));   // Slightly offset so output doesn't align perfectly with LED
+      if (msg_ptr) {
+        char* this_msg_ptr=msg_ptr;
+        printf("%s\n",this_msg_ptr);
+        vPortFree(this_msg_ptr);
+        msg_ptr=NULL;
+      }
+      vTaskDelay(pdMS_TO_TICKS(10));   // Slightly offset so output doesn't align perfectly with LED
     }
 }
 
 void vReadTask(void *pvParameters) {
-  BaseType_t next_delay=0;
-  BaseType_t has_input=0;
+  char buf[40];
+  int i_buf=0;
   for(;;) {
     int c = getchar_timeout_us(0);
     if (c != PICO_ERROR_TIMEOUT) {
-        if(c>='0' && c<='9') {
-          has_input=1;
-          next_delay=next_delay*10+(c-'0');
+        if(c!=0x0d) {
+          buf[i_buf]=c;
+          i_buf++;
         } else {
-          if(has_input) delay=next_delay;
-          next_delay=0;
-          has_input=0;
+          buf[i_buf]=0;
+          i_buf++;
+          char* this_msg_ptr=pvPortMalloc(i_buf);
+          memcpy(this_msg_ptr,buf,i_buf);
+          msg_ptr=this_msg_ptr;
+          i_buf=0;
         }
     }
     vTaskDelay(pdMS_TO_TICKS(1));
@@ -61,18 +54,6 @@ void vReadTask(void *pvParameters) {
 
 int main() {
     stdio_init_all();
-
-    printf("Starting FreeRTOS demo...\n");
-
-    // Create blink task
-    xTaskCreate(
-        vBlinkTask,
-        "BlinkA",                  // task name (for debugging)
-        BLINK_STACK_SIZE,
-        NULL,                     // parameters (none yet)
-        BLINK_TASK_PRIORITY,
-        NULL                      // task handle (none needed)
-    );
 
     // Create print task
     xTaskCreate(

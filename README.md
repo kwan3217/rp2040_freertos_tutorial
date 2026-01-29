@@ -109,3 +109,12 @@ task was higher, it would block but never yield.
 Second effort uses pico_sdk function `getchar_timeout_us(0)` which returns immediately with either a char or "no char ready". If there
 is a char ready, check if it's a digit. If it is, accumulate the digit. if not, set the delay if we saw any digits, then reset the 
 accumulator.
+
+## Lesson 4 - Memory Allocation
+
+### Challenge
+> Using FreeRTOS, create two separate tasks. One listens for input over UART (from the Serial Monitor). Upon receiving a newline character (‘\n’), the task allocates a new section of heap memory (using pvPortMalloc()) and stores the string up to the newline character in that section of heap. It then notifies the second task that a message is ready.
+> 
+> The second task waits for notification from the first task. When it receives that notification, it prints the message in heap memory to the Serial Monitor. Finally, it deletes the allocated heap memory (using vPortFree()).
+
+This is before the queue section, so we will (inappropriately) use global variables. We will carefully use volatile global variables even though queues are more appropriate (we haven't reached that lesson yet)
