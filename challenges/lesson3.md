@@ -1,6 +1,6 @@
 ## Lesson 3 - non-blocking USB input
-* [Web page]( )
-* [Video]( )
+* [Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-3-task-scheduling/8fbb9e0b0eed4279a2dd698f02ce125f)
+* [Video](https://www.youtube.com/watch?v=95yUbClyf3E)
 
 ### Challenge
 
@@ -18,4 +18,6 @@ Second effort uses pico_sdk function `getchar_timeout_us(0)` which returns immed
 with either a char or "no char ready". If there is a char ready, check if it's a digit.
 If it is, accumulate the digit. if not, set the delay if we saw any digits, then reset
 the accumulator.
+
+[main.c](https://github.com/kwan3217/rp2040_freertos_tutorial/blob/lesson3/main.c)
 

@@ -1,6 +1,6 @@
 ## Lesson 6 - Mutex
-* [Web page]( )
-* [Video]( )
+* [Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-6-freertos-mutex-example/c6e3581aa2204f1380e83a9b4c3807a6)
+* [Video](https://www.youtube.com/watch?v=I55auRpbiTs)
 
 ### Challenge
 

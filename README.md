@@ -22,7 +22,8 @@ sudo apt install -y git cmake build-essential gcc-arm-none-eabi libnewlib-arm-no
 ```
 
 ## picotool
-I don't think I've used picotool yet.
+I don't think I've used picotool directly yet, but the cmakefiles for pico-sdk based projects require
+it to be present and will otherwise download and build it.
 ```
 cd ~
 git clone https://github.com/raspberrypi/picotool.git
