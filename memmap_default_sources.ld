@@ -1,3 +1,5 @@
+/* Derived from pico-sdk/src/rp2_common/pico_crt0/rp2040/memmap_default.ld */
+
 /* Based on GCC ARM embedded samples.
    Defines the following symbols for use by code:
     __exidx_start

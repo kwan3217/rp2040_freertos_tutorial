@@ -72,8 +72,8 @@ The process is:
 
 ## Lessons and Challenges
 1. [Web Page](https://www.digikey.com/en/maker/projects/what-is-a-realtime-operating-system-rtos/28d8087f53844decafa5000d89608016) [Video](https://www.youtube.com/watch?v=F321087yYy4) No code for this lesson
-2. [Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-2-freertos/b3f84c9c9455439ca2dcb8ccfce9dec5) [Video](https://www.youtube.com/watch?v=JIr7Xm_riRs) [Challenge](challenges/lesson2.md)
-3. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
-4. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
-5. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
-6. [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+2. [Notes](challenges/lesson2.md) [Web page](https://www.digikey.com/en/maker/projects/introduction-to-rtos-solution-to-part-2-freertos/b3f84c9c9455439ca2dcb8ccfce9dec5) [Video](https://www.youtube.com/watch?v=JIr7Xm_riRs) [Challenge](challenges/lesson2.md)
+3. [Notes](challenges/lesson3.md) [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+4. [Notes](challenges/lesson4.md) [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+5. [Notes](challenges/lesson5.md) [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)
+6. [Notes](challenges/lesson6.md) [Web page]() [Video]( ) [Challenge](challenges/lesson3.md)

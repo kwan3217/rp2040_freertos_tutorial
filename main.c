@@ -107,8 +107,79 @@ void vTaskB(void *pvParameters) {
   }
 }
 
+unsigned char checksum=0;
+size_t addr=0;
+
+void intel_hex_print_byte(unsigned char b) {
+  checksum+=b;
+  printf("%02x",b);
+}
+
+void intel_hex_begin_line(unsigned char len, unsigned short a, unsigned char type) {
+  checksum=0;
+  printf(":");
+  intel_hex_print_byte(len);
+  intel_hex_print_byte(a>>8);
+  intel_hex_print_byte(a & 0xFF);
+  intel_hex_print_byte(type);
+}
+
+void intel_hex_end_line() {
+  intel_hex_print_byte(256-checksum);
+  printf("\n");
+}
+
+void intel_hex_begin() {
+  addr=0;
+}
+
+void intel_hex_end() {
+  intel_hex_begin_line(0,0,1);
+  intel_hex_end_line();
+}
+
+void intel_hex_address(int ia) {
+  if((ia & 0xFFFF0000) != (addr & 0xFFFF0000)) {
+    addr=ia;
+    intel_hex_begin_line(2,0,4);
+    intel_hex_print_byte((addr>>24) & 0xFF);
+    intel_hex_print_byte((addr>>16) & 0xFF);
+    intel_hex_end_line();
+  }
+}
+
+void intel_hex_line(const char* start, int base, int len) {
+  intel_hex_address(base);
+  intel_hex_begin_line(len,((unsigned int)base)&0xFFFF,0);
+  for(int i=0;i<len;i++) intel_hex_print_byte(start[i]);
+  intel_hex_end_line();
+}
+
+void dump_region(const char* p, int base, int len, int rec_len) {
+  intel_hex_begin();
+  while(len>0) {
+    if(rec_len>len) rec_len=len;
+    intel_hex_line(p,base,rec_len);
+    base+=rec_len;
+    p+=rec_len;
+    len-=rec_len;
+  }
+  intel_hex_end();
+}
+
+
+extern char __sources_start,__sources_end;
+void dump() {
+  dump_region(&__sources_start,0,&__sources_end-&__sources_start,32);
+}
+
 int main() {
     stdio_init_all();
+    scanf("%c");
+    printf("start: %08x\n",(uint32_t)&__sources_start);
+    printf("end:   %08x\n",(uint32_t)&__sources_end);
+    printf("size:  %8d\n", &__sources_end-&__sources_start);
+    dump();
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
