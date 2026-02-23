@@ -168,17 +168,17 @@ void dump_region(const char* p, int base, int len, int rec_len) {
 }
 
 
-extern char __sources_start,__sources_end;
+extern char sources_start[],sources_end[];
 void dump() {
-  dump_region(&__sources_start,0,&__sources_end-&__sources_start,32);
+  dump_region(sources_start,0,sources_end-sources_start,32);
 }
 
 int main() {
     stdio_init_all();
     scanf("%c");
-    printf("start: %08x\n",(uint32_t)&__sources_start);
-    printf("end:   %08x\n",(uint32_t)&__sources_end);
-    printf("size:  %8d\n", &__sources_end-&__sources_start);
+    printf("start: %08x\n",(uint32_t)sources_start);
+    printf("end:   %08x\n",(uint32_t)sources_end);
+    printf("size:  %8d\n", sources_end-sources_start);
     dump();
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
