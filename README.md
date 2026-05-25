@@ -1,3 +1,5 @@
+Moved to [GitLab](https://gitlab.com/kwan32171/rp2040_freertos_tutorial)
+
 This repository tracks my progress in the [Digikey Introduction to FreeRTOS](https://www.youtube.com/playlist?list=PLEBQazB0HUyQ4hAPU1cJED6t3DU0h34bz).
 
 1. [x] Get a blinky+usb cdc stream running on real RP2040 hardware
